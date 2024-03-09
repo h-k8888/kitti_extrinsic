@@ -90,13 +90,13 @@ void saveIMUCamOutput()
         for (int i = 0; i < seq_size; ++i) {
             M3D & r = r_imu_cam_output[i];
             V3D & t = t_imu_cam_output[i];
-            of_file << i << endl;
-            of_file << "r\n" <<
+            of_file << "#seq " << i << endl;
+            of_file << "extrinsic_T: [" <<
+                    t(0,0) << ", " << t(1,0) << ", " <<t(2,0)  << "]\n";
+            of_file << "extrinsic_R: [" <<
             r(0,0) << ", " << r(0,1) << ", " << r(0,2) << "\n" <<
             r(1,0) << ", " << r(1,1) << ", " << r(1,2) << "\n" <<
-            r(2,0) << ", " << r(2,1) << ", " << r(2,2) << endl;
-            of_file << "t\n" <<
-            t(0,0) << ", " << t(1,0) << ", " <<t(2,0)  << endl;
+            r(2,0) << ", " << r(2,1) << ", " << r(2,2) << "]\n";
         }
         of_file.close();
     }
