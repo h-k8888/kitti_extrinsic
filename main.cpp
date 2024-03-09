@@ -1,33 +1,10 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 #include <Eigen/Dense>
 
-typedef Eigen::Matrix3d M3D;
-typedef Eigen::Vector3d V3D;
-using  namespace std;
-
-int seq_size = 11; //kitti odometry sequence
-
-// kitti dataset extrinsic
-// "Tr" in file "data_odometry_calib", velodyne in the left camera frame
-vector<M3D> r_cam_lidar_input(seq_size);
-vector<V3D> t_cam_lidar_input(seq_size);
-
-
-
-
-//  R, T in raw_data file "calib_imu_to_velo.txt", imu in lidar frame
-vector<M3D> r_lidar_imu_input(seq_size);
-vector<V3D> t_lidar_imu_input(seq_size);
-
-//  R, T in raw_data file "calib_velo_to_cam.txt"
-vector<M3D> r_cam_lidar_raw_input(seq_size);
-vector<V3D> t_cam_lidar_raw_input(seq_size);
-
-vector<M3D> r_imu_cam_output(seq_size);
-vector<V3D> t_imu_cam_output(seq_size);
-
+#include "set_data.h"
 
 //// imu <-- camera, camera in imu frame
 //void transform_1_imu_cam(const M3D & r_imu_lidar, const V3D& t_imu_lidar, const M3D & r_lidar_cam, const V3D& t_lidar_cam,
@@ -98,13 +75,42 @@ void test_transform_1_2()
         cout << "r_imu_cam_raw_2\n" <<r_imu_cam_raw_2 << endl;
         cout << "t_imu_cam_raw_2\n" <<t_imu_cam_raw_2.transpose() << endl;
     }
+}
 
+// cam in imu frame
+void saveIMUCamOutput()
+{
+    string file = "/home/autolab/kitti_extrinsic/imu_cam.txt";
+//    string file = "imu_cam.txt";
+    ofstream of_file(file);
+    if (of_file.is_open())
+    {
+        of_file.setf(ios::fixed, ios::floatfield);
+        of_file.precision(20);
+        for (int i = 0; i < seq_size; ++i) {
+            M3D & r = r_imu_cam_output[i];
+            V3D & t = t_imu_cam_output[i];
+            of_file << i << endl;
+            of_file << "r\n" <<
+            r(0,0) << ", " << r(0,1) << ", " << r(0,2) << "\n" <<
+            r(1,0) << ", " << r(1,1) << ", " << r(1,2) << "\n" <<
+            r(2,0) << ", " << r(2,1) << ", " << r(2,2) << endl;
+            of_file << "t\n" <<
+            t(0,0) << ", " << t(1,0) << ", " <<t(2,0)  << endl;
+        }
+        of_file.close();
+    }
 }
 
 int main() {
     std::cout << "Hello, KITTI!" << std::endl;
+
+    set_cam_lidar_odom();
+    set_lidar_imu_raw();
+    set_cam_lidar_raw();
     test_transform_1_2();
 
+    saveIMUCamOutput();
 
 
     return 0;
