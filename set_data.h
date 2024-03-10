@@ -24,6 +24,9 @@ vector<V3D> t_lidar_imu_input(seq_size);
 vector<M3D> r_cam_lidar_raw_input(seq_size);
 vector<V3D> t_cam_lidar_raw_input(seq_size);
 
+vector<M3D> r_imu_lidar_output(seq_size);
+vector<V3D> t_imu_lidar_output(seq_size);
+
 vector<M3D> r_imu_cam_output(seq_size);
 vector<V3D> t_imu_cam_output(seq_size);
 
